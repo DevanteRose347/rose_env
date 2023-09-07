@@ -3,11 +3,16 @@ from flask_sqlalchemy import SQLAlchemy #allows our database to read our classes
 from flask_login import UserMixin, LoginManager #allows us to load a current logged in user
 from datetime import datetime
 import uuid #generate a unique id (basically the same serializing last week)
+from flask_marshmallow import Marshmallow 
+
+#internal import
+from .helpers import get_image
 
 
 
 db = SQLAlchemy() #instantiate our database
 login_manager = LoginManager() #instantiate our login manager
+ma = Marshmallow() #instantiating our Marshmallow class 
 
 
 
@@ -41,9 +46,167 @@ class User(db.Model, UserMixin):
         return str(uuid.uuid4())
     
 
+    def get_id(self):
+        return str(self.user_id)
+    
+
     def set_password(self, password):
         return generate_password_hash(password)
     
 
     def __repr__(self):
         return f"<USER: {self.username}"
+    
+
+class CAR(db.Model):
+    car_id = db.Column(db.String, primary_key = True)
+    name = db.Column(db.String(100), nullable = False)
+    image = db.Column(db.String, nullable = False)
+    description = db.Column(db.String(200))
+    price = db.Column(db.Numeric(precision=10, scale=2), nullable = False)
+    quantity = db.Column(db.Integer, nullable = False)
+    date_added = db.Column(db.DateTime, default = datetime.utcnow)
+    #user_id = db.Column(db.String, db.ForeignKey('user.user_id'), nullable = False) #if we wanted to make a foreign key relationship
+
+
+    def __init__(self, name, price, quantity, image = "", description = ""):
+        self.car_id = self.set_id()
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+        self.image = self.set_image(image, name)
+        self.description = description
+
+    def set_id(self):
+        return str(uuid.uuid4()) #create unique ID 
+    
+
+    def set_image(self, image, name):
+        if not image: #aka image is not present
+            image = get_image(name) #adding get_image function which makes an external 3rd party API callh
+            print("api image", image)
+
+        return image
+    
+    def decrement_quantity(self, quantity):
+
+        self.quantity -= int(quantity)
+        return self.quantity #all methods need to return otherwise the object attribute doesnt get updated
+    
+    def increment_quantity(self, quantity):
+
+        self.quantity += int(quantity)
+        return self.quantity
+    
+
+    def __repr__(self):
+        return f"<PRODUCT: {self.name}>"
+
+
+
+class Customer(db.Model):
+    cust_id = db.Column(db.String, primary_key = True)
+    date_created = db.Column(db.DateTime, default = datetime.utcnow())
+    carord  = db.relationship('CarOrder', backref = 'customer', lazy = True) #backref is just how are these related, lazy means a Customer can exist without the CarOrder table
+
+
+    def __init__(self, cust_id):
+        self.cust_id = cust_id #we are getting their id from the front end 
+
+
+
+#Many to Many relationship with Products, Customers & Orders
+#So we need a join table
+
+class CAROrder(db.Model):
+    carorder_id = db.Column(db.String, primary_key = True)
+    car_id = db.Column(db.String, db.ForeignKey('product.car_id'), nullable = False)
+    quantity = db.Column(db.Integer, nullable = False)
+    price = db.Column(db.Numeric(precision = 10, scale = 2), nullable = False)
+    order_id = db.Column(db.String,  db.ForeignKey('order.order_id'), nullable = False)
+    cust_id = db.Column(db.String, db.ForeignKey('customer.cust_id'), nullable = False)
+
+
+    def __init__(self, car_id, quantity, price, order_id, cust_id):
+        self.carorder_id = self.set_id()
+        self.car_id = car_id
+        self.quantity = quantity
+        self.price = self.set_price(price, quantity)
+        self.order_id = order_id
+        self.cust_id = cust_id 
+
+
+    def set_id(self):
+        return str(uuid.uuid4())
+    
+
+
+    def set_price(self, price, quantity):
+
+        quantity = int(quantity)
+        price = int(price)
+
+        self.price = quantity * price
+        return self.price 
+    
+
+    def update_quantity(self, quantity): #method used for when customers update their order quantity of a specific product 
+
+        self.quantity = int(quantity)
+        return self.quantity
+    
+
+
+class Order(db.Model):
+    order_id = db.Column(db.String, primary_key = True)
+    order_total = db.Column(db.Numeric(precision = 10, scale = 2), nullable = False)
+    date_created = db.Column(db.DateTime, default = datetime.utcnow())
+    carorder = db.relationship('ProdOrder', backref = 'order', lazy = True)
+
+
+    def __init__(self):
+        self.order_id = self.set_id()
+        self.order_total = 0.00
+
+
+    def set_id(self):
+        return str(uuid.uuid4())
+    
+
+    #for every product's total price in prodorder table add to our order's total price 
+    def increment_order_total(self, price):
+
+        self.order_total = float(self.order_total)
+        self.order_total += float(price)
+
+        return self.order_total
+    
+    def decrement_order_total(self, price):
+
+        self.order_total = float(self.order_total)
+        self.order_total -= float(price)
+
+
+        return self.order_total 
+    
+    def __repr__(self):
+
+        return f"<ORDER: {self.order_id}>"
+    
+
+#Because we are building a RESTful API this week (Representational State Transfer) 
+#json rules that world. JavaScript Object Notation aka dictionaries 
+
+
+#Build our Schema
+#How your object looks when being passed from server to server 
+#These will look like dictionaries 
+
+class CarSchema(ma.Schema):
+    class Meta: 
+        fields = ['prod_id', 'name', 'image', 'description', 'price', 'quantity'] 
+
+
+
+product_schema = CarSchema() #this is for passing 1 singular product 
+products_schema = CarSchema(many = True) #this for passing multiple products, list of dictionaries 
