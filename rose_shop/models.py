@@ -100,7 +100,7 @@ class CAR(db.Model):
     
 
     def __repr__(self):
-        return f"<PRODUCT: {self.name}>"
+        return f"<CAR: {self.name}>"
 
 
 
@@ -115,12 +115,12 @@ class Customer(db.Model):
 
 
 
-#Many to Many relationship with Products, Customers & Orders
+#Many to Many relationship with cars, Customers & Orders
 #So we need a join table
 
 class CAROrder(db.Model):
     carorder_id = db.Column(db.String, primary_key = True)
-    car_id = db.Column(db.String, db.ForeignKey('product.car_id'), nullable = False)
+    car_id = db.Column(db.String, db.ForeignKey('car.car_id'), nullable = False)
     quantity = db.Column(db.Integer, nullable = False)
     price = db.Column(db.Numeric(precision = 10, scale = 2), nullable = False)
     order_id = db.Column(db.String,  db.ForeignKey('order.order_id'), nullable = False)
@@ -173,7 +173,7 @@ class Order(db.Model):
         return str(uuid.uuid4())
     
 
-    #for every product's total price in prodorder table add to our order's total price 
+    #for every car's total price in prodorder table add to our order's total price 
     def increment_order_total(self, price):
 
         self.order_total = float(self.order_total)
@@ -204,9 +204,9 @@ class Order(db.Model):
 
 class CarSchema(ma.Schema):
     class Meta: 
-        fields = ['prod_id', 'name', 'image', 'description', 'price', 'quantity'] 
+        fields = ['car_id', 'name', 'image', 'description', 'price', 'quantity'] 
 
 
 
-product_schema = CarSchema() #this is for passing 1 singular product 
-products_schema = CarSchema(many = True) #this for passing multiple products, list of dictionaries 
+car_schema = CarSchema() #this is for passing 1 singular car 
+car_schema = CarSchema(many = True) #this for passing multiple cars, list of dictionaries 
