@@ -60,7 +60,10 @@ class User(db.Model, UserMixin):
 
 class CAR(db.Model):
     car_id = db.Column(db.String, primary_key = True)
-    name = db.Column(db.String(100), nullable = False)
+    year = db.Column(db.Numeric(precision=10, scale=2), nullable = False)
+    make = db.Column(db.String(100), nullable = False)
+    model = db.Column(db.String(100), nullable = False)
+    color = db.Column(db.String(100), nullable = False)
     image = db.Column(db.String, nullable = False)
     description = db.Column(db.String(200))
     price = db.Column(db.Numeric(precision=10, scale=2), nullable = False)
@@ -69,21 +72,24 @@ class CAR(db.Model):
     #user_id = db.Column(db.String, db.ForeignKey('user.user_id'), nullable = False) #if we wanted to make a foreign key relationship
 
 
-    def __init__(self, name, price, quantity, image = "", description = ""):
+    def __init__(self, make, year, model, color, price, quantity, image = "", description = ""):
         self.car_id = self.set_id()
-        self.name = name
+        self.make = make
+        self.year = year
+        self.model = model
+        self.color = color
         self.price = price
         self.quantity = quantity
-        self.image = self.set_image(image, name)
+        self.image = self.set_image(image, make)
         self.description = description
 
     def set_id(self):
         return str(uuid.uuid4()) #create unique ID 
     
 
-    def set_image(self, image, name):
+    def set_image(self, image, make):
         if not image: #aka image is not present
-            image = get_image(name) #adding get_image function which makes an external 3rd party API callh
+            image = get_image(make) #adding get_image function which makes an external 3rd party API callh
             print("api image", image)
 
         return image
@@ -100,7 +106,7 @@ class CAR(db.Model):
     
 
     def __repr__(self):
-        return f"<CAR: {self.name}>"
+        return f"<CAR: {self.make}>"
 
 
 
