@@ -1,5 +1,7 @@
 import requests
 import requests_cache
+import decimal 
+import json 
 
 
 
@@ -22,5 +24,13 @@ def get_image(search):
     response = requests.get(url, headers=headers, params=querystring)
 
     data = response.json()
+    print(data)
     img_url = data['items'][0]['originalImageUrl'] #traversing data dictionary to get the image url we want
     return img_url
+
+
+class JSONENcoder(json.JSONEncoder):
+    def default(self, obj): #our custom method to handle encoding decimal objects 
+        if isinstance(obj, decimal.Decimal):
+            return str(obj)
+        return json.JSONEncoder(JSONENcoder, self).default(obj) #if its not a decimal just pass it to the default on the json.JSONEncoder

@@ -58,7 +58,7 @@ class User(db.Model, UserMixin):
         return f"<USER: {self.username}"
     
 
-class CAR(db.Model):
+class Car(db.Model):
     car_id = db.Column(db.String, primary_key = True)
     year = db.Column(db.Numeric(precision=10, scale=2), nullable = False)
     make = db.Column(db.String(100), nullable = False)
@@ -124,7 +124,7 @@ class Customer(db.Model):
 #Many to Many relationship with cars, Customers & Orders
 #So we need a join table
 
-class CAROrder(db.Model):
+class CarOrder(db.Model):
     carorder_id = db.Column(db.String, primary_key = True)
     car_id = db.Column(db.String, db.ForeignKey('car.car_id'), nullable = False)
     quantity = db.Column(db.Integer, nullable = False)
@@ -167,7 +167,7 @@ class Order(db.Model):
     order_id = db.Column(db.String, primary_key = True)
     order_total = db.Column(db.Numeric(precision = 10, scale = 2), nullable = False)
     date_created = db.Column(db.DateTime, default = datetime.utcnow())
-    carorder = db.relationship('ProdOrder', backref = 'order', lazy = True)
+    carorder = db.relationship('CarOrder', backref = 'order', lazy = True)
 
 
     def __init__(self):
@@ -215,4 +215,4 @@ class CarSchema(ma.Schema):
 
 
 car_schema = CarSchema() #this is for passing 1 singular car 
-car_schema = CarSchema(many = True) #this for passing multiple cars, list of dictionaries 
+cars_schema = CarSchema(many = True) #this for passing multiple cars, list of dictionaries 

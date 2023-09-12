@@ -20,9 +20,9 @@
 {% if current_user.is_authenticated %}
 <div class="row bg-dark p-3 shop-stats">
     <!-- Eventually we will query our database to populate these stats  -->
-    <div class="col d-flex-justify-content-center">Total # of Customers: </div>
-    <div class="col d-flex-justify-content-center">Total Sales : $</div>
-    <div class="col d-flex-justify-content-center">Total Cars: </div>
+    <div class="col d-flex-justify-content-center">Total # of Customers: {{ stats.customers }}</div>
+    <div class="col d-flex-justify-content-center">Total Sales : $ {{ stats.sales }}</div>
+    <div class="col d-flex-justify-content-center">Total Cars: {{ stats.cars }}</div>
 </div>
 <!-- Eventually our cars will show up down here! -->
 {% for car in shop %}

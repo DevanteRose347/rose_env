@@ -92,7 +92,7 @@ def update(id):
 @site.route('/shop/delete/<id>')
 def delete(id):
 
-    product = Car.query.get(id)
+    car = Car.query.get(id)
 
     db.session.delete(car)
     db.session.commit()
