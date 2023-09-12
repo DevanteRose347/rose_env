@@ -1,4 +1,4 @@
-% extends 'base.html' %}
+{% extends 'base.html' %}
 
 
 
@@ -8,16 +8,16 @@
 <div class="container d-flex justify-content-center align-items center">
     <div class="row mt-5 p-5 shadow rounded border border-primary w-75">
         <div class="col d-flex">
-            <img src="https://static2.hotcarsimages.com/wordpress/wp-content/uploads/2020/06/2017-Lamborghini-Aventador-LP-750-4-SV-3.jpg" class="img-fluid rounded" alt="">
+            <img src="https://th.bing.com/th/id/R.e2f04c1fd8c5b254c2174a02001fbfa2?rik=DK5iALhrR78wbA&riu=http%3a%2f%2fhdqwalls.com%2fdownload%2f1%2f2016-fastest-cars-sd.jpg&ehk=pMm7gKoI0GBmxHxvGwlOTWbr2afxhn5ExvDpv0UNKQo%3d&risl=1&pid=ImgRaw&r=0" class="img-fluid rounded" alt="">
         </div>
         <div class="col">
             <form class="row g-3" method="POST">
                 {{ form.hidden_tag() }}
-                <h3>Sign Into Your Account!</h3>
+                <h3>Log Into Your Account!</h3>
                 
                 <div class="col-12">
                     {{ form.email.label }}
-                    {{ form.email(class='form-control mt-2', placeholder = 'clane@gmail.com' )}}
+                    {{ form.email(class='form-control mt-2', placeholder = 'jdoe@gmail.com' )}}
                     {% for error in form.email.errors %}
                         <span class="err-msg">{{ error }}</span>
                     {% endfor %}
@@ -40,3 +40,11 @@
         </div>
     </div>
 </div>
+
+
+
+
+
+
+
+{% endblock content%}

@@ -1,9 +1,9 @@
 <form class="row g-3" method="POST">
     {{ form.hidden_tag() }}
     <div class="col-md-12">
-        {{ form.name.label }}
-        {{form.name(class='form-control mt-2', placeholder = 'ferrari')}}
-        {% for error in form.name.errors %}
+        {{ form.make.label }}
+        {{form.make(class='form-control mt-2', placeholder = 'ferrari')}}
+        {% for error in form.make.errors %}
             <span class="err-msg">{{ error }}</span>
         {% endfor %}
     </div>

@@ -22,14 +22,12 @@ class RegisterForm(FlaskForm):
     verify_password = PasswordField('Confirm Password', validators=[ DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
 
-
-
-#create our Car Form
+# create our Car Form
 class CarForm(FlaskForm):
-    make = StringField("Car Make", validators=[ DataRequired()])
+    make = StringField("Car Make", validators=[DataRequired()])
     year = IntegerField("Car Year", validators=[DataRequired()])
-    model = StringField("Car Model", validators=[ DataRequired()])
-    color = StringField("Car color", validators=[ DataRequired()])
+    model = StringField("Car Model", validators=[DataRequired()])
+    color = StringField("Car color", validators=[DataRequired()])
     image = StringField("Img Url **Optional")
     description = StringField("Description **Optional")
     price = DecimalField("Price", validators=[DataRequired()])

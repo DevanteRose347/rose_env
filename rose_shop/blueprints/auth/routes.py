@@ -48,6 +48,37 @@ def signup():
 
 
         flash(f"You have successfully registered user {username}", category='success')
-        return redirect('/') #we will add signin route 
+        return redirect('/signin') #we will add signin route 
     
     return render_template('sign_up.html', form=registerform) #passing the registerform into the html
+
+
+@auth.route('/signin', methods = ['GET', 'POST'])
+def signin():
+
+    loginform = LoginForm()
+
+    if request.method == 'POST' and loginform.validate_on_submit():
+        email = loginform.email.data
+        password = loginform.password.data
+        print(email,password)
+
+
+        user = User.query.filter(User.email == email).first()
+        print(user)
+
+        if user and check_password_hash(user.password, password): #if there is a user that matches the email & the passwords match
+            login_user(user) #This we have access to because of the UserMixin we inherited 
+            #using the user_loader() function we made so now that will be the current_user of our site
+            flash(f"Successfully logged in user {email}", category='success')
+            return redirect('/')
+        else:
+            flash(f"Invalid Email and/or Password, Please try again", category='warning')
+            return redirect('/signin')
+        
+    return render_template('sign_in.html', form=loginform)
+
+@auth.route('/logout') #if don't add methods = [] it defaults to 'GET'
+def logout():
+    logout_user() #whatever user is the current_user will be logged out. 
+    return redirect('/')
