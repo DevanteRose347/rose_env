@@ -67,9 +67,7 @@ def get_order(cust_id):
 
         car = Car.query.filter(Car.car_id == order.car_id).first()
 
-        car_data = car_schema.dump(
-            car
-        )  # change this from an object to a dictionary
+        car_data = car_schema.dump(car)  # change this from an object to a dictionary
 
         car_data["quantity"] = order.quantity  # coming from the carorder table
         car_data[
@@ -77,9 +75,7 @@ def get_order(cust_id):
         ] = order.order_id  # want to associate this car with a specific order
         car_data[
             "id"
-        ] = (
-            order.carorder_id
-        )  # need to make cars unique even if they are the same car
+        ] = order.carorder_id  # need to make cars unique even if they are the same car
 
         data.append(car_data)
 
@@ -118,9 +114,7 @@ def create_order(cust_id):
         order.increment_order_total(carorder.price)
 
         # decrement the available amount of that specific car in our shop
-        current_car = Car.query.filter(
-            Car.car_id == car["car_id"]
-        ).first()
+        current_car = Car.query.filter(Car.car_id == car["car_id"]).first()
         current_car.decrement_quantity(car["quantity"])
 
     db.session.commit()
@@ -161,9 +155,7 @@ def update_order(order_id):
 
     elif carorder.quantity > new_quantity:
         car.increment_quantity(diff)  # increase our available inventory
-        car.decrement_order_total(
-            carorder.price
-        )  # our order total is going to be less
+        car.decrement_order_total(carorder.price)  # our order total is going to be less
 
     carorder.update_quantity(new_quantity)
 

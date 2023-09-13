@@ -38,18 +38,21 @@ def create():
 
     if request.method == "POST" and createform.validate_on_submit():
         # try:
-        name = createform.make.data
+        make = createform.make.data
+        year = createform.year.data
+        model = createform.model.data
+        color = createform.color.data
         desc = createform.description.data
         image = createform.image.data
         price = createform.price.data
         quantity = createform.quantity.data
 
-        shop = Car(name, price, quantity, image, desc)  # instantiating Car object
+        shop = Car(make, year, model, color, price, quantity, image, desc)  # instantiating Car object
 
         db.session.add(shop)
         db.session.commit()
 
-        flash(f"You have successfully created product {name}", category="success")
+        flash(f"You have successfully created product {make}", category="success")
         return redirect("/")
 
         # except:
@@ -67,17 +70,17 @@ def update(id):
 
     if request.method == "POST" and updateform.validate_on_submit():
         try:
-            car.name = updateform.name.data
+            car.make = updateform.make.data
             car.description = updateform.description.data
             car.set_image(
-                updateform.image.data, updateform.name.data
+                updateform.image.data, updateform.make.data
             )  # calling upon that set_image method to set our image!
             car.price = updateform.price.data
             car.quantity = updateform.quantity.data
 
             db.session.commit()  # commits the changes to our objects
 
-            flash(f"You have successfully updated car {car.name}", category="success")
+            flash(f"You have successfully updated car {car.make}", category="success")
             return redirect("/")
 
         except:

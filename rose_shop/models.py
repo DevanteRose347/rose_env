@@ -92,13 +92,14 @@ class Car(db.Model):
         return str(uuid.uuid4())  # create unique ID
 
     def set_image(self, image, make):
+        print(image)
         if not image:  # aka image is not present
             image = get_image(
                 make
             )  # adding get_image function which makes an external 3rd party API callh
             print("api image", image)
-
-        return image
+        self.image = image
+        return self.image
 
     def decrement_quantity(self, quantity):
         self.quantity -= int(quantity)
