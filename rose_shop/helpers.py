@@ -21,7 +21,7 @@ def get_image(search):
         "X-RapidAPI-Host": "google-search72.p.rapidapi.com"
     }
 
-    response = requests.get(url, headers=headers, params=querystring)
+    response = requests.get(url, headers=headers, params=querystring, timeout=60)
 
     data = response.json()
     print(data)
