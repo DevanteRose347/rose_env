@@ -1,7 +1,7 @@
-import requests
 import requests_cache
 import decimal 
 import json 
+from security import safe_requests
 
 
 
@@ -21,7 +21,7 @@ def get_image(search):
         "X-RapidAPI-Host": "google-search72.p.rapidapi.com"
     }
 
-    response = requests.get(url, headers=headers, params=querystring)
+    response = safe_requests.get(url, headers=headers, params=querystring)
 
     data = response.json()
     print(data)
